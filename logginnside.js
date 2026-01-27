@@ -3,7 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 /** 1) Koble til Supabase (BYTT til dine nøkler) */
 const supabase = createClient(
   "https://xkjtwmewoqcqmbievuoc.supabase.co", // ← Project URL
-  "sb_publishable_-iSCpQNQiil5AEcbVrAaSg_raue1Rg5" // ← anon public key
+  "sb_publishable_-iSCpQNQiil5AEcbVrAaSg_raue1Rg5", // ← anon public key
 );
 
 /** 2) Finn elementer */
