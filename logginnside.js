@@ -64,6 +64,11 @@ async function refreshAuthUI() {
   whoami.textContent = `Innlogget som ${user.email}`;
   roleBadge.textContent = `Rolle: ${role}`;
   userBadge.textContent = role === "admin" ? "Admin" : "Innlogget";
+
+  // Redirect til index.html når bruker er logget inn
+  setTimeout(() => {
+    window.location.href = "index.html";
+  }, 500);
 }
 
 /** 6) Logg inn */
