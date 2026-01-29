@@ -1,17 +1,16 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-/** 1) Koble til Supabase (BYTT til dine nøkler) */
+/** 1) Koble til Supabase */
 const supabase = createClient(
-  "https://enqtcoensqhabwxdqiba.supabase.co", // ← Project URL
-  "sb_publishable_0kBQILhwtUU4r9Xxwz1SqQ_XHCTO5GW", // ← anon public key
+  "https://enqtcoensqhabwxdqiba.supabase.co", // Project URL
+  "sb_publishable_0kBQILhwtUU4r9Xxwz1SqQ_XHCTO5GW", // anon key
 );
 
-/** 2) Finn elementer */
+/** 2) Elementer */
 const panel = document.getElementById("authPanel");
 const openBtn = document.getElementById("authOpenBtn");
 const closeBtn = document.getElementById("authCloseBtn");
 const userBadge = document.getElementById("authUserBadge");
-
 const loggedOut = document.getElementById("authLoggedOut");
 const loggedIn = document.getElementById("authLoggedIn");
 const whoami = document.getElementById("whoami");
@@ -26,14 +25,14 @@ const signupMsg = document.getElementById("signupMsg");
 /** 3) Åpne/lukk panel */
 openBtn.addEventListener("click", () => {
   panel.classList.add("open");
-  panel.removeAttribute("inert");
+  panel.inert = false;
 });
 closeBtn.addEventListener("click", () => {
   panel.classList.remove("open");
-  panel.setAttribute("inert", "");
+  panel.inert = true;
 });
 
-/** 4) Bytt mellom "Logg inn" og "Opprett profil" */
+/** 4) Bytt mellom login/signup */
 tabButtons.forEach((btn) => {
   btn.addEventListener("click", () => {
     tabButtons.forEach((b) => b.classList.remove("active"));
@@ -44,7 +43,7 @@ tabButtons.forEach((btn) => {
   });
 });
 
-/** 5) Oppdater UI (bruker + rolle) */
+/** 5) Oppdater UI */
 async function refreshAuthUI() {
   const {
     data: { user },
@@ -57,7 +56,7 @@ async function refreshAuthUI() {
     return;
   }
 
-  // Les rolle fra "profiles" (hvis du har en RLS tabell)
+  // Les rolle fra profiles-tabellen
   const { data: profile } = await supabase
     .from("profiles")
     .select("role")
@@ -65,15 +64,19 @@ async function refreshAuthUI() {
     .maybeSingle();
 
   const role = profile?.role ?? "user";
-
   loggedOut.style.display = "none";
   loggedIn.style.display = "";
   whoami.textContent = `Innlogget som ${user.email}`;
   roleBadge.textContent = `Rolle: ${role}`;
   userBadge.textContent = role === "admin" ? "Admin" : "Innlogget";
+
+  // Redirect til index.html
+  setTimeout(() => {
+    window.location.href = "index.html";
+  }, 500);
 }
 
-/** 6) Logg inn */
+/** 6) Login */
 loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   loginMsg.textContent = "Logger inn...";
@@ -85,26 +88,23 @@ loginForm.addEventListener("submit", async (e) => {
     email,
     password: pass,
   });
+  console.log("Login response:", { data, error });
 
   if (error) {
     loginMsg.textContent = "Feil: " + error.message;
     return;
   }
 
-  if (!data.session) {
-    loginMsg.textContent =
-      "Epost ikke bekreftet. Sjekk innboksen din for bekreftelsesmail.";
+  if (!data.user) {
+    loginMsg.textContent = "Epost ikke bekreftet eller feil info";
     return;
   }
 
   loginMsg.textContent = "Innlogget ✅";
-
-  // Redirect til index.html
-  window.location.href =
-    "https://eriksamjr2-pixel.github.io/tverrfaglig-prosjekt/index.html";
+  await refreshAuthUI();
 });
 
-/** 7) Opprett bruker */
+/** 7) Signup */
 signupForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   signupMsg.textContent = "Oppretter...";
@@ -122,34 +122,19 @@ signupForm.addEventListener("submit", async (e) => {
     options: { data: { display_name: name } },
   });
 
-  if (error) {
-    signupMsg.textContent = "Feil: " + error.message;
-    return;
-  }
+  console.log("Signup response:", { data, error });
 
-  signupMsg.textContent =
-    "Konto opprettet ✅ Sjekk epost for bekreftelse før innlogging.";
+  signupMsg.textContent = error
+    ? "Feil: " + error.message
+    : "Konto opprettet ✅ Sjekk e-post for bekreftelse.";
 });
 
-/** 8) Logg ut */
+/** 8) Logout */
 document.getElementById("logoutBtn").addEventListener("click", async () => {
   await supabase.auth.signOut();
   await refreshAuthUI();
 });
 
-/** 9) Auto-redirect hvis bruker allerede logget inn */
-async function checkSession() {
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  if (session) {
-    window.location.href =
-      "https://eriksamjr2-pixel.github.io/tverrfaglig-prosjekt/index.html";
-  }
-}
-
-checkSession();
-
-/** 10) Hold UI i sync */
+/** 9) Auth state listener */
 supabase.auth.onAuthStateChange(() => refreshAuthUI());
 refreshAuthUI();
