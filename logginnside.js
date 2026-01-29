@@ -24,8 +24,14 @@ const loginMsg = document.getElementById("loginMsg");
 const signupMsg = document.getElementById("signupMsg");
 
 /** 3) Åpne/lukk panel */
-openBtn.addEventListener("click", () => panel.classList.add("open"));
-closeBtn.addEventListener("click", () => panel.classList.remove("open"));
+openBtn.addEventListener("click", () => {
+  panel.classList.add("open");
+  panel.removeAttribute("inert");
+});
+closeBtn.addEventListener("click", () => {
+  panel.classList.remove("open");
+  panel.setAttribute("inert", "");
+});
 
 /** 4) Bytt mellom "Logg inn" og "Opprett profil" */
 tabButtons.forEach((btn) => {
