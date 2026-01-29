@@ -1,12 +1,10 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-/** 1) Koble til Supabase */
 const supabase = createClient(
-  "https://enqtcoensqhabwxdqiba.supabase.co", // Project URL
-  "sb_publishable_0kBQILhwtUU4r9Xxwz1SqQ_XHCTO5GW", // anon key
+  "https://enqtcoensqhabwxdqiba.supabase.co",
+  "sb_publishable_0kBQILhwtUU4r9Xxwz1SqQ_XHCTO5GW",
 );
 
-/** 2) Elementer */
 const panel = document.getElementById("authPanel");
 const openBtn = document.getElementById("authOpenBtn");
 const closeBtn = document.getElementById("authCloseBtn");
@@ -22,7 +20,7 @@ const signupForm = document.getElementById("signupForm");
 const loginMsg = document.getElementById("loginMsg");
 const signupMsg = document.getElementById("signupMsg");
 
-/** 3) Åpne/lukk panel */
+// Åpne/lukk panel
 openBtn.addEventListener("click", () => {
   panel.classList.add("open");
   panel.inert = false;
@@ -32,7 +30,7 @@ closeBtn.addEventListener("click", () => {
   panel.inert = true;
 });
 
-/** 4) Bytt mellom login/signup */
+// Bytt tab
 tabButtons.forEach((btn) => {
   btn.addEventListener("click", () => {
     tabButtons.forEach((b) => b.classList.remove("active"));
@@ -43,40 +41,44 @@ tabButtons.forEach((btn) => {
   });
 });
 
-/** 5) Oppdater UI */
+// Refresh UI uten å trigge AbortError
 async function refreshAuthUI() {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  try {
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
+    if (error) console.log("Get user error:", error);
 
-  if (!user) {
-    loggedOut.style.display = "";
-    loggedIn.style.display = "none";
-    userBadge.textContent = "";
-    return;
-  }
+    if (!user) {
+      loggedOut.style.display = "";
+      loggedIn.style.display = "none";
+      userBadge.textContent = "";
+      return;
+    }
 
-  // Les rolle fra profiles-tabellen
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .maybeSingle();
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .maybeSingle();
 
-  const role = profile?.role ?? "user";
-  loggedOut.style.display = "none";
-  loggedIn.style.display = "";
-  whoami.textContent = `Innlogget som ${user.email}`;
-  roleBadge.textContent = `Rolle: ${role}`;
-  userBadge.textContent = role === "admin" ? "Admin" : "Innlogget";
+    const role = profile?.role ?? "user";
 
-  // Redirect til index.html
-  setTimeout(() => {
+    loggedOut.style.display = "none";
+    loggedIn.style.display = "";
+    whoami.textContent = `Innlogget som ${user.email}`;
+    roleBadge.textContent = `Rolle: ${role}`;
+    userBadge.textContent = role === "admin" ? "Admin" : "Innlogget";
+
+    // Redirect etter UI er oppdatert
     window.location.href = "index.html";
-  }, 500);
+  } catch (err) {
+    console.error("refreshAuthUI error:", err);
+  }
 }
 
-/** 6) Login */
+// Login
 loginForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   loginMsg.textContent = "Logger inn...";
@@ -84,27 +86,32 @@ loginForm.addEventListener("submit", async (e) => {
   const email = document.getElementById("loginEmail").value.trim();
   const pass = document.getElementById("loginPass").value;
 
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email,
-    password: pass,
-  });
-  console.log("Login response:", { data, error });
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password: pass,
+    });
+    console.log("Login response:", { data, error });
 
-  if (error) {
-    loginMsg.textContent = "Feil: " + error.message;
-    return;
+    if (error) {
+      loginMsg.textContent = "Feil: " + error.message;
+      return;
+    }
+
+    if (!data.user) {
+      loginMsg.textContent = "Epost ikke bekreftet eller feil info";
+      return;
+    }
+
+    loginMsg.textContent = "Innlogget ✅";
+    await refreshAuthUI(); // nå safe, ingen AbortError
+  } catch (err) {
+    console.error("Login error:", err);
+    loginMsg.textContent = "Noe gikk galt under innlogging";
   }
-
-  if (!data.user) {
-    loginMsg.textContent = "Epost ikke bekreftet eller feil info";
-    return;
-  }
-
-  loginMsg.textContent = "Innlogget ✅";
-  await refreshAuthUI();
 });
 
-/** 7) Signup */
+// Signup
 signupForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   signupMsg.textContent = "Oppretter...";
@@ -116,25 +123,34 @@ signupForm.addEventListener("submit", async (e) => {
     .toLowerCase();
   const pass = document.getElementById("signupPass").value;
 
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password: pass,
-    options: { data: { display_name: name } },
-  });
+  try {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password: pass,
+      options: { data: { display_name: name } },
+    });
 
-  console.log("Signup response:", { data, error });
+    console.log("Signup response:", { data, error });
 
-  signupMsg.textContent = error
-    ? "Feil: " + error.message
-    : "Konto opprettet ✅ Sjekk e-post for bekreftelse.";
+    signupMsg.textContent = error
+      ? "Feil: " + error.message
+      : "Konto opprettet ✅ Sjekk e-post for bekreftelse.";
+  } catch (err) {
+    console.error("Signup error:", err);
+    signupMsg.textContent = "Noe gikk galt under registrering";
+  }
 });
 
-/** 8) Logout */
+// Logout
 document.getElementById("logoutBtn").addEventListener("click", async () => {
-  await supabase.auth.signOut();
-  await refreshAuthUI();
+  try {
+    await supabase.auth.signOut();
+    await refreshAuthUI();
+  } catch (err) {
+    console.error("Logout error:", err);
+  }
 });
 
-/** 9) Auth state listener */
+// Auth state listener
 supabase.auth.onAuthStateChange(() => refreshAuthUI());
 refreshAuthUI();
