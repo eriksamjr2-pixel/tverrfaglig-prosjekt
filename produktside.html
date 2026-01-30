@@ -27,7 +27,19 @@
         <a class="navbar-brand fw-semibold text-white" href="index.html"
           >SHOPSTOREMARKET</a
         >
-        <div>
+        <div class="d-flex gap-2 align-items-center">
+          <button
+            id="cartBtn"
+            class="btn btn-sm btn-outline-light position-relative"
+          >
+            🛒 Handlekurv
+            <span
+              id="cartCount"
+              class="position-absolute top-0 start-100 translate-middle badge bg-danger rounded-pill"
+              style="display: none"
+              >0</span
+            >
+          </button>
           <a href="logginnside.html" class="btn btn-sm btn-outline-light">
             Logg inn
           </a>
@@ -67,7 +79,17 @@
 
           <p class="small text-muted">Lager: <strong>15 på lager</strong></p>
 
-          <button id="buyBtn" class="btn btn-primary btn-lg w-100">
+          <button
+            id="buyBtn"
+            class="btn btn-primary btn-lg w-100 mb-2"
+            onclick="addToCart('prod-001', 'Produktnavn', 499)"
+          >
+            🛒 Legg til i handlekurv
+          </button>
+          <button
+            class="btn btn-dark w-100 mb-2"
+            onclick="alert('Kjøpsflyt ikke implementert i demo.')"
+          >
             Kjøp nå
           </button>
           <a href="index.html" class="btn btn-outline-secondary w-100">
@@ -82,13 +104,33 @@
       © 2026 SHOPSTOREMARKET
     </footer>
 
+    <!-- HANDLEKURV SIDEBAR -->
+    <aside id="cartPanel" class="cart-panel">
+      <header
+        class="p-3 border-bottom d-flex justify-content-between align-items-center"
+      >
+        <strong>Handlekurv</strong>
+        <button id="cartCloseBtn" class="btn btn-sm btn-outline-secondary">
+          Lukk
+        </button>
+      </header>
+      <div class="cart-items p-3">
+        <div id="emptyCart" class="text-muted text-center">
+          <p>Handlekurven er tom</p>
+        </div>
+        <div id="cartList" style="display: none"></div>
+      </div>
+      <div class="cart-footer p-3 border-top">
+        <div class="mb-3">
+          <strong>Total:</strong>
+          <span id="cartTotal" class="float-end">kr 0,-</span>
+        </div>
+        <button class="btn btn-primary w-100">Gå til kasse</button>
+      </div>
+    </aside>
+
     <!-- SCRIPTS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script type="module" src="script.js"></script>
-    <script>
-      document.getElementById("buyBtn")?.addEventListener("click", () => {
-        alert("Kjøpsflyt er ikke implementert i denne demoen.");
-      });
-    </script>
   </body>
 </html>
