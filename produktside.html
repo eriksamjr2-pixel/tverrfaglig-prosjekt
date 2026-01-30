@@ -87,10 +87,11 @@
             🛒 Legg til i handlekurv
           </button>
           <button
-            class="btn btn-dark w-100 mb-2"
-            onclick="alert('Kjøpsflyt ikke implementert i demo.')"
+            class="btn btn-outline-danger w-100 mb-2"
+            id="favBtn"
+            onclick="toggleFavorite('prod-001', 'Produktnavn')"
           >
-            Kjøp nå
+            ❤️ Legg til som favoritt
           </button>
           <a href="index.html" class="btn btn-outline-secondary w-100">
             Tilbake til hjem
@@ -125,7 +126,12 @@
           <strong>Total:</strong>
           <span id="cartTotal" class="float-end">kr 0,-</span>
         </div>
-        <button class="btn btn-primary w-100">Gå til kasse</button>
+        <button
+          class="btn btn-primary w-100"
+          onclick="window.location.href = 'kasse.html'"
+        >
+          Gå til kasse
+        </button>
       </div>
     </aside>
 

@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="no">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https://esm.sh https://cdn.jsdelivr.net; default-src 'self' https:; style-src 'self' 'unsafe-inline' https:;"
+    />
+    <title>Kasse - SHOPSTOREMARKET</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link href="style.css" rel="stylesheet" />
+    <link href="logginnside.css" rel="stylesheet" />
+    <link href="kasse.css" rel="stylesheet" />
+  </head>
+
+  <body>
+    <!-- NAVBAR -->
+    <nav
+      class="navbar navbar-expand-md navbar-dark bg-black border-bottom"
+      aria-label="Hovednavigasjon"
+    >
+      <div class="container d-flex justify-content-between align-items-center">
+        <a class="navbar-brand fw-semibold text-white" href="index.html"
+          >SHOPSTOREMARKET</a
+        >
+        <div class="d-flex gap-2 align-items-center">
+          <a href="index.html" class="btn btn-sm btn-outline-light"
+            >← Tilbake</a
+          >
+          <a href="logginnside.html" class="btn btn-sm btn-outline-light"
+            >Logg inn</a
+          >
+          <span id="authUserBadge" class="ms-2 small text-white-50"></span>
+        </div>
+      </div>
+    </nav>
+
+    <!-- HERO -->
+    <header class="py-5 bg-light border-bottom">
+      <div class="container">
+        <h1 class="h3 fw-bold">Kasse</h1>
+        <p class="text-muted mb-0">Gjennomgå og fullfør din bestilling</p>
+      </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="container py-4">
+      <div class="row g-4">
+        <!-- Venstre: Produkt oversikt -->
+        <div class="col-lg-8">
+          <div class="card">
+            <div class="card-header bg-light">
+              <h5 class="mb-0">Bestillingsoversikt</h5>
+            </div>
+            <div class="card-body">
+              <div id="cartSummary" class="checkout-items">
+                <p class="text-muted text-center">Laster handlekurv...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Høyre: Sammenfatting og betalingsformular -->
+        <div class="col-lg-4">
+          <!-- Sammenfatting -->
+          <div class="card mb-4">
+            <div class="card-header bg-light">
+              <h5 class="mb-0">Sammenfatting</h5>
+            </div>
+            <div class="card-body">
+              <div class="d-flex justify-content-between mb-2">
+                <span>Subtotal:</span>
+                <span id="subtotal">kr 0,-</span>
+              </div>
+              <div class="d-flex justify-content-between mb-2">
+                <span>Frakt:</span>
+                <span id="shipping">kr 99,-</span>
+              </div>
+              <hr />
+              <div class="d-flex justify-content-between fw-bold fs-5">
+                <span>Total:</span>
+                <span id="total">kr 99,-</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Leveringsadresse -->
+          <div class="card">
+            <div class="card-header bg-light">
+              <h5 class="mb-0">Leveringsadresse</h5>
+            </div>
+            <div class="card-body">
+              <form id="checkoutForm">
+                <div class="mb-3">
+                  <label for="fullName" class="form-label">Fullt navn</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="fullName"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="email" class="form-label">E-post</label>
+                  <input
+                    type="email"
+                    class="form-control"
+                    id="email"
+                    required
+                  />
+                </div>
+                <div class="mb-3">
+                  <label for="address" class="form-label">Adresse</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="address"
+                    required
+                  />
+                </div>
+                <div class="row g-3 mb-3">
+                  <div class="col-md-6">
+                    <label for="postalCode" class="form-label"
+                      >Postnummer</label
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="postalCode"
+                      required
+                    />
+                  </div>
+                  <div class="col-md-6">
+                    <label for="city" class="form-label">By</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="city"
+                      required
+                    />
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">
+                  Fullfør bestilling
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="py-3 mt-4 border-top text-center small text-muted">
+      © 2026 SHOPSTOREMARKET
+    </footer>
+
+    <!-- SCRIPTS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="script.js"></script>
+    <script src="kasse.js"></script>
+  </body>
+</html>

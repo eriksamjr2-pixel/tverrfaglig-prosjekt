@@ -111,6 +111,59 @@ class ShoppingCart {
   }
 }
 
+// Favoritter-logikk
+function loadFavorites() {
+  const stored = localStorage.getItem("favorites");
+  return stored ? JSON.parse(stored) : [];
+}
+
+function saveFavorites(favorites) {
+  localStorage.setItem("favorites", JSON.stringify(favorites));
+}
+
+window.toggleFavorite = function (productId, productName) {
+  const favorites = loadFavorites();
+  const index = favorites.findIndex((fav) => fav.id === productId);
+
+  const favBtn = document.getElementById("favBtn");
+
+  if (index > -1) {
+    favorites.splice(index, 1);
+    alert(`${productName} fjernet fra favoritter ❤️`);
+    if (favBtn) {
+      favBtn.classList.remove("btn-danger");
+      favBtn.classList.add("btn-outline-danger");
+      favBtn.textContent = "❤️ Legg til som favoritt";
+    }
+  } else {
+    favorites.push({ id: productId, name: productName });
+    alert(`${productName} lagt til i favoritter ❤️`);
+    if (favBtn) {
+      favBtn.classList.add("btn-danger");
+      favBtn.classList.remove("btn-outline-danger");
+      favBtn.textContent = "❤️ Fjern fra favoritter";
+    }
+  }
+
+  saveFavorites(favorites);
+};
+
+// Sjekk og oppdater favoritt-knapp når siden laster
+function updateFavoriteButton() {
+  const productId = "prod-001";
+  const favorites = loadFavorites();
+  const isFavorite = favorites.some((fav) => fav.id === productId);
+  const favBtn = document.getElementById("favBtn");
+
+  if (favBtn && isFavorite) {
+    favBtn.classList.add("btn-danger");
+    favBtn.classList.remove("btn-outline-danger");
+    favBtn.textContent = "❤️ Fjern fra favoritter";
+  }
+}
+
+document.addEventListener("DOMContentLoaded", updateFavoriteButton);
+
 // Initialisér handlekurven når siden laster
 const cart = new ShoppingCart();
 
