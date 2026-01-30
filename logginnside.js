@@ -116,3 +116,4 @@ if (document.readyState === "loading") {
 } else {
   init();
 }
+//TAKK FOR MEG E.S.E

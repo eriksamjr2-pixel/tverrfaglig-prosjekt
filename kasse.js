@@ -106,3 +106,4 @@ class CheckoutPage {
 document.addEventListener("DOMContentLoaded", () => {
   new CheckoutPage();
 });
+//TAKK FOR MEG E.S.E

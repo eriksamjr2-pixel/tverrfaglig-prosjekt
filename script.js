@@ -172,3 +172,4 @@ window.addToCart = function (productId, name, price) {
   cart.addItem({ id: productId, name, price });
   alert(`${name} lagt til i handlekurven!`);
 };
+//TAKK FOR MEG E.S.E
